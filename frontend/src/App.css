@@ -1,0 +1,18 @@
+main {
+  max-width: 720px;
+  margin: 80px auto;
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+h1 {
+  margin-top: 0;
+  color: #0f172a;
+}
+
+strong {
+  color: #2563eb;
+}
