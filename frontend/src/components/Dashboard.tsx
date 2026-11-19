@@ -36,19 +36,22 @@ export function Dashboard() {
       setError('')
       try {
         let savedSettings: UserSettings
+        let hasSavedSettings = true
         try {
           savedSettings = await api.getSettings()
         } catch (requestError) {
           if (requestError instanceof ApiError && requestError.status === 404) {
             savedSettings = DEFAULT_SETTINGS
+            hasSavedSettings = false
           } else {
             throw requestError
           }
         }
-
         if (!active) return
         setSettings(savedSettings)
         setForm(toForm(savedSettings))
+
+        if (!hasSavedSettings) return
 
         try {
           const [market, latest] = await Promise.all([

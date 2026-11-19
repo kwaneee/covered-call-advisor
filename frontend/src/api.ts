@@ -34,6 +34,17 @@ export interface StockInformation {
   disclaimer: string
 }
 
+export interface CallOption {
+  strike_price: number
+  expiration_date: string
+  bid_price: number | null
+  ask_price: number | null
+  delta: number | null
+  theta: number | null
+  implied_volatility: number | null
+  contract_multiplier: number
+}
+
 export interface CoveredCallRecommendation {
   strike: number
   expiration: string
@@ -58,7 +69,7 @@ export interface RecommendationResponse {
 
 export interface MarketData {
   stock: StockInformation
-  call_options: unknown[]
+  call_options: CallOption[]
 }
 
 export class ApiError extends Error {
