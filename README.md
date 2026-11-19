@@ -44,6 +44,27 @@ Open the Vite URL printed in the terminal, normally `http://localhost:5173`.
 - `BACKEND_ADDRESS` defaults to `127.0.0.1:3001`.
 - `DATABASE_URL` defaults to `sqlite:data/covered-call-advisor.db?mode=rwc`.
 - The backend reads a local `.env` file when present.
+- `SMTP_SERVER` is the SMTP server hostname.
+- `SMTP_PORT` defaults to `587`.
+- `SMTP_USERNAME` is the SMTP account username.
+- `SMTP_PASSWORD` is the SMTP account password.
+- `SMTP_FROM` is the sender email address.
+
+Keep SMTP credentials in environment variables or a local `.env` file. Never commit credentials.
+
+## Scheduled email notifications
+
+The backend checks at 10:00 AM America/Toronto each day. It sends at most one notification for each trading date, skips weekends and US exchange holidays, and uses the saved notification email address.
+
+Mock-data runs are always marked as simulated in the email.
+
+To trigger a manual development test:
+
+```bash
+curl -X POST http://127.0.0.1:3001/api/notifications/test
+```
+
+The backend process must remain running or be deployed to a server for scheduled notifications to work.
 
 ## Settings and active position API
 

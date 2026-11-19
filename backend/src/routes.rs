@@ -5,7 +5,7 @@ use axum::{
     extract::{Path, State},
     http::StatusCode,
     response::{IntoResponse, Response},
-    routing::get,
+    routing::{get, post},
 };
 use serde_json::{Value, json};
 
@@ -14,6 +14,7 @@ use crate::db::{
 };
 use crate::market_data::{MarketDataError, RecommendationEngine};
 use crate::models::{ActivePosition, MarketData, RecommendationResponse, UserSettings};
+use crate::notifications::run_notification_process;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -46,6 +47,7 @@ pub fn router(state: AppState) -> Router {
                 .put(upsert_position_handler)
                 .delete(close_position_handler),
         )
+        .route("/api/notifications/test", post(test_notification_handler))
         .with_state(Arc::new(state))
 }
 
@@ -210,4 +212,13 @@ async fn close_position_handler(
         .await
         .map(|_| StatusCode::NO_CONTENT)
         .map_err(|error| ApiError::internal(format!("database error: {error}")))
+}
+
+async fn test_notification_handler(
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<Value>, ApiError> {
+    let subject = run_notification_process(&state.pool, &state.recommendation_engine, true)
+        .await
+        .map_err(ApiError::bad_request)?;
+    Ok(Json(json!({ "status": "sent", "subject": subject })))
 }

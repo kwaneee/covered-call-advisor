@@ -50,6 +50,16 @@ pub async fn initialize_schema(pool: &DbPool) -> Result<(), sqlx::Error> {
     .execute(pool)
     .await?;
 
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS notification_log (
+            notification_date TEXT PRIMARY KEY
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
     Ok(())
 }
 
@@ -188,6 +198,23 @@ pub async fn close_position(pool: &DbPool) -> Result<(), sqlx::Error> {
     Ok(())
 }
 
+pub async fn was_notification_sent(pool: &DbPool, date: &str) -> Result<bool, sqlx::Error> {
+    let count: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM notification_log WHERE notification_date = ?")
+            .bind(date)
+            .fetch_one(pool)
+            .await?;
+    Ok(count > 0)
+}
+
+pub async fn record_notification(pool: &DbPool, date: &str) -> Result<(), sqlx::Error> {
+    sqlx::query("INSERT OR IGNORE INTO notification_log (notification_date) VALUES (?)")
+        .bind(date)
+        .execute(pool)
+        .await?;
+    Ok(())
+}
+
 fn normalize_settings(settings: &UserSettings) -> UserSettings {
     UserSettings {
         stock_ticker: settings.stock_ticker.trim().to_uppercase(),
@@ -321,5 +348,16 @@ mod tests {
         assert_eq!(get_settings(&second).await.unwrap(), Some(settings()));
         second.close().await;
         let _ = std::fs::remove_file(path);
+    }
+
+    #[tokio::test]
+    async fn notification_log_prevents_duplicate_date_records() {
+        let pool = test_pool().await;
+        assert!(!was_notification_sent(&pool, "2026-11-18").await.unwrap());
+
+        record_notification(&pool, "2026-11-18").await.unwrap();
+        record_notification(&pool, "2026-11-18").await.unwrap();
+        assert!(was_notification_sent(&pool, "2026-11-18").await.unwrap());
+        assert!(!was_notification_sent(&pool, "2026-11-19").await.unwrap());
     }
 }

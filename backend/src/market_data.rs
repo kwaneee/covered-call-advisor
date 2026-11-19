@@ -211,7 +211,7 @@ fn expiration_dte_from_date(expiration: NaiveDate, as_of: chrono::DateTime<Utc>)
     (expiration - as_of.date_naive()).num_days()
 }
 
-fn stock_quote_is_fresh(stock: &StockInformation, as_of: chrono::DateTime<Utc>) -> bool {
+pub fn stock_quote_is_fresh(stock: &StockInformation, as_of: chrono::DateTime<Utc>) -> bool {
     if !stock.current_price.is_finite() || stock.current_price <= 0.0 {
         return false;
     }

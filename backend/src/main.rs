@@ -1,6 +1,7 @@
 mod db;
 mod market_data;
 mod models;
+mod notifications;
 mod routes;
 mod validation;
 
@@ -25,6 +26,14 @@ async fn main() {
         .await
         .unwrap_or_else(|error| panic!("database should be available: {error}"));
     let recommendation_engine = RecommendationEngine::new(Arc::new(MockMarketDataProvider));
+    let scheduler_pool = pool.clone();
+    let scheduler_engine = recommendation_engine.clone();
+    tokio::spawn(async move {
+        loop {
+            notifications::scheduled_tick(&scheduler_pool, &scheduler_engine).await;
+            tokio::time::sleep(std::time::Duration::from_secs(30)).await;
+        }
+    });
     let app = router(AppState {
         pool,
         recommendation_engine,
