@@ -1,18 +1,504 @@
-main {
-  max-width: 720px;
-  margin: 80px auto;
-  padding: 32px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+.app-shell {
+  min-height: 100vh;
 }
 
-h1 {
-  margin-top: 0;
+.topbar {
+  height: 72px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0f172a;
+  font-weight: 750;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #175cd3;
+  color: #ffffff;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  height: 100%;
+  align-items: center;
+}
+
+.nav-tab {
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.nav-tab--active {
+  background: #eff6ff;
+  color: #175cd3;
+}
+
+.main-content {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.8fr);
+  gap: 20px;
+}
+
+.card,
+.wait-card,
+.status-state {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
+}
+
+.card {
+  padding: 24px;
+}
+
+.card-heading,
+.recommendations-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.card-heading h2,
+.recommendations-heading h2,
+.status-state h2,
+.wait-card h2 {
+  margin: 4px 0 0;
   color: #0f172a;
 }
 
-strong {
-  color: #2563eb;
+.eyebrow {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.simulated-badge,
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  background: #fff7ed;
+  color: #b45309;
+  border: 1px solid #fed7aa;
+}
+
+.metrics-grid,
+.active-position-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.metric {
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+}
+
+.metric span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.metric strong {
+  color: #0f172a;
+  font-size: 19px;
+  overflow-wrap: anywhere;
+}
+
+.data-disclaimer {
+  margin: 16px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.recommendation-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recommendation-summary h3 {
+  margin: 12px 0 6px;
+  color: #0f172a;
+}
+
+.recommendation-summary p {
+  margin: 4px 0;
+  color: #475569;
+}
+
+.status-pill--recommendations {
+  align-self: flex-start;
+  background: #ecfdf3;
+  color: #067647;
+  border-color: #abefc6;
+}
+
+.status-pill--wait {
+  align-self: flex-start;
+  background: #fffaeb;
+  color: #b54708;
+  border-color: #fedf89;
+}
+
+.status-pill--active-position {
+  background: #eff6ff;
+  color: #175cd3;
+  border-color: #b2ccff;
+}
+
+.preferences-card {
+  grid-column: 1 / -1;
+}
+
+.preferences-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.preferences-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.preferences-form input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  outline: none;
+}
+
+.preferences-form input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.wide-field {
+  grid-column: span 3;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.primary-button {
+  height: 42px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 18px;
+  background: #175cd3;
+  color: #ffffff;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.primary-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.saved-message {
+  color: #067647;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.inline-error {
+  color: #b42318;
+  margin: 14px 0 0;
+  font-size: 13px;
+}
+
+.status-state {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 32px;
+  text-align: center;
+}
+
+.status-state p {
+  color: #64748b;
+}
+
+.status-state--error {
+  border-color: #fecaca;
+}
+
+.wait-card {
+  max-width: 620px;
+  margin: 40px auto;
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.wait-card p:last-child {
+  color: #64748b;
+  max-width: 480px;
+  margin: 12px auto 0;
+}
+
+.wait-symbol {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fffaeb;
+  color: #b54708;
+  border: 1px solid #fedf89;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.recommendations-heading {
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+.recommendation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recommendation-card {
+  display: grid;
+  grid-template-columns: 54px minmax(180px, 0.8fr) minmax(360px, 1.7fr);
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+
+.rank {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #175cd3;
+  font-weight: 800;
+}
+
+.contract-main h3 {
+  margin: 5px 0 6px;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.contract-main p:last-child {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.contract-values {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.contract-values div {
+  min-width: 0;
+  padding: 9px;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.contract-values dt {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.contract-values dd {
+  margin: 4px 0 0;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.qualification {
+  grid-column: 2 / -1;
+  margin: 0;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.qualification strong {
+  display: block;
+  color: #334155;
+  margin-bottom: 2px;
+}
+
+.active-position-card {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.active-position-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.position-note {
+  margin: 18px 0 0;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preferences-card {
+    grid-column: auto;
+  }
+
+  .preferences-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wide-field {
+    grid-column: span 2;
+  }
+
+  .recommendation-card {
+    grid-template-columns: 54px minmax(150px, 0.7fr) 1fr;
+  }
+
+  .qualification {
+    grid-column: 2 / -1;
+  }
+
+  .active-position-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    height: auto;
+    min-height: 68px;
+    padding: 10px 16px;
+  }
+
+  .brand > span:last-child {
+    display: none;
+  }
+
+  .nav-tab {
+    padding: 0 10px;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .metrics-grid,
+  .preferences-form,
+  .active-position-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wide-field {
+    grid-column: auto;
+  }
+
+  .recommendation-card {
+    grid-template-columns: 44px 1fr;
+  }
+
+  .contract-values {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .qualification {
+    grid-column: 1 / -1;
+  }
+
+  .recommendations-heading {
+    align-items: flex-end;
+  }
 }
