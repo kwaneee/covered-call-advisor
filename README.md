@@ -39,6 +39,20 @@ npm run dev
 
 Open the Vite URL printed in the terminal, normally `http://localhost:5173`.
 
+## Backend configuration
+
+- `BACKEND_ADDRESS` defaults to `127.0.0.1:3001`.
+- `DATABASE_URL` defaults to `sqlite:data/covered-call-advisor.db?mode=rwc`.
+- The backend reads a local `.env` file when present.
+
+## Settings and active position API
+
+- `GET /api/settings`
+- `PUT|POST /api/settings`
+- `GET /api/position`
+- `PUT|POST /api/position`
+- `DELETE /api/position`
+
 ## Health check
 
 - API: `http://127.0.0.1:3001/api/health`
