@@ -13,7 +13,7 @@ use crate::db::{
     DbPool, close_position, get_position, get_settings, upsert_position, upsert_settings,
 };
 use crate::market_data::{MarketDataError, RecommendationEngine};
-use crate::models::{ActivePosition, MarketData, UserSettings};
+use crate::models::{ActivePosition, MarketData, RecommendationResponse, UserSettings};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -25,6 +25,14 @@ pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/api/health", get(health))
         .route("/api/market-data/{ticker}", get(get_market_data_handler))
+        .route(
+            "/api/recommendations",
+            get(get_saved_recommendations_handler),
+        )
+        .route(
+            "/api/recommendations/{ticker}",
+            get(get_ticker_recommendations_handler),
+        )
         .route(
             "/api/settings",
             get(get_settings_handler)
@@ -61,6 +69,58 @@ async fn get_market_data_handler(
             "invalid simulated market data: {message}"
         ))),
     }
+}
+
+async fn get_saved_recommendations_handler(
+    State(state): State<Arc<AppState>>,
+) -> Result<Json<RecommendationResponse>, ApiError> {
+    build_recommendations(&state, None).await
+}
+
+async fn get_ticker_recommendations_handler(
+    State(state): State<Arc<AppState>>,
+    Path(ticker): Path<String>,
+) -> Result<Json<RecommendationResponse>, ApiError> {
+    build_recommendations(&state, Some(ticker)).await
+}
+
+async fn build_recommendations(
+    state: &Arc<AppState>,
+    requested_ticker: Option<String>,
+) -> Result<Json<RecommendationResponse>, ApiError> {
+    let settings = get_settings(&state.pool)
+        .await
+        .map_err(|error| ApiError::internal(format!("database error: {error}")))?
+        .ok_or_else(|| ApiError::not_found("user settings not found"))?;
+
+    if let Some(ticker) = requested_ticker {
+        if !ticker.trim().eq_ignore_ascii_case(&settings.stock_ticker) {
+            return Err(ApiError::bad_request(
+                "requested ticker must match the saved stock ticker",
+            ));
+        }
+    }
+
+    let position = get_position(&state.pool)
+        .await
+        .map_err(|error| ApiError::internal(format!("database error: {error}")))?;
+
+    let response = state
+        .recommendation_engine
+        .recommend(&settings, position.as_ref())
+        .await
+        .map_err(|error| match error {
+            MarketDataError::InvalidTicker => {
+                ApiError::bad_request("saved stock ticker is invalid")
+            }
+            MarketDataError::TickerNotFound(ticker) => {
+                ApiError::not_found(format!("market data not found for {ticker}"))
+            }
+            MarketDataError::InvalidData(message) => {
+                ApiError::internal(format!("invalid market data: {message}"))
+            }
+        })?;
+    Ok(Json(response))
 }
 
 struct ApiError {

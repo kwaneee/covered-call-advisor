@@ -50,3 +50,43 @@ pub struct MarketData {
     pub stock: StockInformation,
     pub call_options: Vec<CallOption>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CoveredCallRecommendation {
+    pub strike: f64,
+    pub expiration: String,
+    pub dte: i64,
+    pub delta: f64,
+    pub bid: f64,
+    pub ask: f64,
+    pub midpoint_premium: f64,
+    pub gross_premium_per_contract: f64,
+    pub potential_profit_if_called_away: Option<f64>,
+    pub contracts_recommended: i64,
+    pub contract_multiplier: i32,
+    pub explanation: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ActivePositionMonitor {
+    pub position: ActivePosition,
+    pub dte: i64,
+    pub shares_covered: i64,
+    pub potential_profit_if_called_away: Option<f64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RecommendationStatus {
+    Recommendations,
+    Wait,
+    ActivePosition,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct RecommendationResponse {
+    pub status: RecommendationStatus,
+    pub recommendations: Vec<CoveredCallRecommendation>,
+    pub active_position: Option<ActivePositionMonitor>,
+    pub wait_reason: Option<String>,
+}
