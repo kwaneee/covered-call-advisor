@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{Path, State},
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::get,
@@ -12,16 +12,19 @@ use serde_json::{Value, json};
 use crate::db::{
     DbPool, close_position, get_position, get_settings, upsert_position, upsert_settings,
 };
-use crate::models::{ActivePosition, UserSettings};
+use crate::market_data::{MarketDataError, RecommendationEngine};
+use crate::models::{ActivePosition, MarketData, UserSettings};
 
 #[derive(Clone)]
 pub struct AppState {
     pub pool: DbPool,
+    pub recommendation_engine: RecommendationEngine,
 }
 
 pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/api/health", get(health))
+        .route("/api/market-data/{ticker}", get(get_market_data_handler))
         .route(
             "/api/settings",
             get(get_settings_handler)
@@ -40,6 +43,24 @@ pub fn router(state: AppState) -> Router {
 
 async fn health() -> Json<Value> {
     Json(json!({ "status": "ok" }))
+}
+
+async fn get_market_data_handler(
+    State(state): State<Arc<AppState>>,
+    Path(ticker): Path<String>,
+) -> Result<Json<MarketData>, ApiError> {
+    match state.recommendation_engine.get_market_data(&ticker).await {
+        Ok(data) => Ok(Json(data)),
+        Err(MarketDataError::InvalidTicker) => {
+            Err(ApiError::bad_request("ticker contains invalid characters"))
+        }
+        Err(MarketDataError::TickerNotFound(ticker)) => Err(ApiError::not_found(format!(
+            "simulated market data not found for {ticker}"
+        ))),
+        Err(MarketDataError::InvalidData(message)) => Err(ApiError::internal(format!(
+            "invalid simulated market data: {message}"
+        ))),
+    }
 }
 
 struct ApiError {

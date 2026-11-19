@@ -1,4 +1,5 @@
 mod db;
+mod market_data;
 mod models;
 mod routes;
 mod validation;
@@ -7,7 +8,9 @@ use std::env;
 use std::fs;
 
 use crate::db::connect;
+use crate::market_data::{MockMarketDataProvider, RecommendationEngine};
 use crate::routes::{AppState, router};
+use std::sync::Arc;
 
 #[tokio::main]
 async fn main() {
@@ -21,7 +24,11 @@ async fn main() {
     let pool = connect(&database_url)
         .await
         .unwrap_or_else(|error| panic!("database should be available: {error}"));
-    let app = router(AppState { pool });
+    let recommendation_engine = RecommendationEngine::new(Arc::new(MockMarketDataProvider));
+    let app = router(AppState {
+        pool,
+        recommendation_engine,
+    });
 
     let listener = tokio::net::TcpListener::bind(&address)
         .await

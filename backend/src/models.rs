@@ -23,3 +23,30 @@ pub struct ActivePosition {
     pub premium_received_per_share: f64,
     pub cost_basis_per_share: Option<f64>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct StockInformation {
+    pub ticker: String,
+    pub current_price: f64,
+    pub quote_timestamp: String,
+    pub data_source: String,
+    pub disclaimer: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CallOption {
+    pub strike_price: f64,
+    pub expiration_date: String,
+    pub bid_price: Option<f64>,
+    pub ask_price: Option<f64>,
+    pub delta: Option<f64>,
+    pub theta: Option<f64>,
+    pub implied_volatility: Option<f64>,
+    pub contract_multiplier: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct MarketData {
+    pub stock: StockInformation,
+    pub call_options: Vec<CallOption>,
+}

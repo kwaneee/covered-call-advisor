@@ -53,6 +53,17 @@ Open the Vite URL printed in the terminal, normally `http://localhost:5173`.
 - `PUT|POST /api/position`
 - `DELETE /api/position`
 
+## Simulated market data API
+
+- `GET /api/market-data/AAPL`
+- `GET /api/market-data/MSFT`
+- `GET /api/market-data/NVDA`
+- `GET /api/market-data/TSLA`
+
+This endpoint uses clearly labeled mock/simulated data only. It does not return live
+market quotes or constitute trading advice. The provider is behind a market-data
+interface and can later be replaced with a real provider.
+
 ## Health check
 
 - API: `http://127.0.0.1:3001/api/health`
